@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from pyquaternion import Quaternion
 
 from constants import SIM_TASK_CONFIGS
-from ee_sim_env_rm import make_ee_sim_env
+from ee_sim_env_rm import make_ee_sim_env_rm
 
 import IPython
 e = IPython.embed
@@ -33,11 +33,13 @@ class BasePolicy:
         # generate trajectory at first timestep, then open-loop execution
         if self.step_count == 0:
             self.generate_trajectory(ts)
-
+        
         # obtain left and right waypoints
         if self.left_trajectory[0]['t'] == self.step_count:
             self.curr_left_waypoint = self.left_trajectory.pop(0)
+        
         next_left_waypoint = self.left_trajectory[0]
+
 
         # interpolate between waypoints to obtain current pose and gripper command
         left_xyz, left_quat = self.interpolate(self.curr_left_waypoint, next_left_waypoint, self.step_count)
@@ -53,7 +55,7 @@ class BasePolicy:
         return np.concatenate([action_left])
 
 
-class PickAndTransferPolicy(BasePolicy):
+class PickAndTransferPolicy2(BasePolicy):
 
     def generate_trajectory(self, ts_first):
         init_mocap_pose_left = ts_first.observation['mocap_pose_left']
@@ -77,8 +79,8 @@ class PickAndTransferPolicy(BasePolicy):
         self.left_trajectory = [
             {"t": 0, "xyz": init_mocap_pose_left[:3], "quat":gripper_pick_quat_grasp.elements}, # sleep
             {"t": 90, "xyz": box_xyz + np.array([0, 0, 0.2]), "quat": gripper_pick_quat_grasp.elements}, # approach the cube
-            {"t": 130, "xyz": box_xyz + np.array([0, 0, +0.01]), "quat":gripper_pick_quat_grasp.elements}, # go down
-            {"t": 170, "xyz": box_xyz + np.array([0, 0, +0.01]), "quat": gripper_pick_quat_grasp.elements} # close gripper
+            {"t": 130, "xyz": box_xyz + np.array([0, 0, +0.1]), "quat":gripper_pick_quat_grasp.elements}, # go down
+            {"t": 170, "xyz": box_xyz + np.array([0, 0, +0.1]), "quat": gripper_pick_quat_grasp.elements} # close gripper
         ]
 
 def test_policy(task_name):
@@ -89,7 +91,7 @@ def test_policy(task_name):
     # setup the environment
     episode_len = 100
     if 'sim_grasp_cube_ur' in task_name:
-        env = make_ee_sim_env('sim_grasp_cube_ur')
+        env = make_ee_sim_env_rm('sim_grasp_cube_ur')
     else:
         raise NotImplementedError
 

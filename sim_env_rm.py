@@ -1,73 +1,51 @@
 import numpy as np
-import collections
 import os
-
-from constants import DT, XML_DIR
-from constants import PUPPET_GRIPPER_POSITION_CLOSE
-from constants import PUPPET_GRIPPER_POSITION_UNNORMALIZE_FN
-from constants import PUPPET_GRIPPER_POSITION_NORMALIZE_FN
-from constants import PUPPET_GRIPPER_VELOCITY_NORMALIZE_FN
-
-from utils import sample_box_pose, sample_insertion_pose
+import collections
+import matplotlib.pyplot as plt
 from dm_control import mujoco
 from dm_control.rl import control
 from dm_control.suite import base
 
+from constants import DT, XML_DIR
+from constants import PUPPET_GRIPPER_POSITION_UNNORMALIZE_FN
+from constants import MASTER_GRIPPER_POSITION_NORMALIZE_FN
+from constants import PUPPET_GRIPPER_POSITION_NORMALIZE_FN
+from constants import PUPPET_GRIPPER_VELOCITY_NORMALIZE_FN
+
 import IPython
 e = IPython.embed
 START_ARM_POSE = [-4.74410956e-01, -2.72182426e-01,  2.04231873e+00 ,-8.91448876e-04, 1.36208805e+00  ,1.09321004e+00]
+BOX_POSE = [None] # to be changed from outside
 
-def make_ee_sim_env_rm(task_name):
+def make_sim_env_rm(task_name):
     """
-    Environment for simulated robot bi-manual manipulation, with end-effector control.
-    Action space:      [right_arm_pose (7),            # position and quaternion for end effector
-                        right_gripper_positions (1),]  # normalized gripper position (0: close, 1: open)
-
+    Environment for simulated robot bi-manual manipulation, with joint position control
+    Action space:      [left_arm_qpos (6),             # absolute joint position
     Observation space: {"qpos": Concat[ left_arm_qpos (6),         # absolute joint position
-                                        left_gripper_position (1),  # normalized gripper position (0: close, 1: open)
-                                        right_arm_qpos (6),         # absolute joint position
-                                        right_gripper_qpos (1)]     # normalized gripper position (0: close, 1: open)
                         "qvel": Concat[ left_arm_qvel (6),         # absolute joint velocity (rad)
-                                        left_gripper_velocity (1),  # normalized gripper velocity (pos: opening, neg: closing)
-                                        right_arm_qvel (6),         # absolute joint velocity (rad)
-                                        right_gripper_qvel (1)]     # normalized gripper velocity (pos: opening, neg: closing)
                         "images": {"main": (480x640x3)}        # h, w, c, dtype='uint8'
     """
     if 'sim_grasp_cube_ur' in task_name:
-        xml_path = os.path.join('./test/RMxml/bimanual_viperx_ee_transfer_cube_rm.xml')
+        xml_path = os.path.join('./test/RMxml/bimanual_viperx_transfer_cube_rm.xml')
         physics = mujoco.Physics.from_xml_path(xml_path)
-        task = GraspCubeEETask(random=False)
+        task = GraspCubeTask(random=False)
         env = control.Environment(physics, task, time_limit=20, control_timestep=DT,
                                   n_sub_steps=None, flat_observation=False)
     else:
         raise NotImplementedError
     return env
 
-class BimanualViperXEETask(base.Task):
+class BimanualViperXTask(base.Task):
     def __init__(self, random=None):
         super().__init__(random=random)
 
     def before_step(self, action, physics):
-        a_len = len(action) 
-        action_left = action[:a_len]
-
-        # set mocap position and quat
-        # left
-        np.copyto(physics.data.mocap_pos[0], action_left[:3])
-        np.copyto(physics.data.mocap_quat[0], action_left[3:7])
-
-    def initialize_robots(self, physics):
-        # reset joint position
-        physics.named.data.qpos[:6] = START_ARM_POSE
-
-        # reset mocap to align with end effector
-        # to obtain these numbers:
-        # (1) make an ee_sim env and reset to the same start_pose
-        # (2) get env._physics.named.data.xpos['vx300s_left/gripper_link']
-        #     get env._physics.named.data.xquat['vx300s_left/gripper_link']
-        #     repeat the same for right side
-        np.copyto(physics.data.mocap_pos[0], [0.31718881, 0.5, 0.29525084])
-        np.copyto(physics.data.mocap_quat[0], [1, 0, 0, 0])
+        left_arm_action = action[:6]
+        print('Target joint positions:', left_arm_action)
+        # 将目标位置赋值给控制输入
+        np.copyto(physics.data.ctrl[:6], left_arm_action)
+        # 调用父类的 before_step 方法
+        super().before_step(action, physics)
 
     def initialize_episode(self, physics):
         """Sets the state of the environment at the start of each episode."""
@@ -92,7 +70,6 @@ class BimanualViperXEETask(base.Task):
         raise NotImplementedError
 
     def get_observation(self, physics):
-        # note: it is important to do .copy()
         obs = collections.OrderedDict()
         obs['qpos'] = self.get_qpos(physics)
         obs['qvel'] = self.get_qvel(physics)
@@ -101,27 +78,26 @@ class BimanualViperXEETask(base.Task):
         obs['images']['top'] = physics.render(height=480, width=640, camera_id='top')
         obs['images']['angle'] = physics.render(height=480, width=640, camera_id='angle')
         obs['images']['vis'] = physics.render(height=480, width=640, camera_id='front_close')
-        # used in scripted policy to obtain starting pose
-        obs['mocap_pose_left'] = np.concatenate([physics.data.mocap_pos[0], physics.data.mocap_quat[0]]).copy()
+
         return obs
 
     def get_reward(self, physics):
+        # return whether left gripper is holding the box
         raise NotImplementedError
 
-class GraspCubeEETask(BimanualViperXEETask):
+class GraspCubeTask(BimanualViperXTask):
     def __init__(self, random=None):
         super().__init__(random=random)
         self.max_reward = 4
 
     def initialize_episode(self, physics):
         """Sets the state of the environment at the start of each episode."""
-        self.initialize_robots(physics)
-        # randomize box position
-        cube_pose = sample_box_pose()
-        box_start_idx = physics.model.name2id('red_box_joint', 'joint')
-        np.copyto(physics.data.qpos[box_start_idx : box_start_idx + 7], cube_pose)
-        # print(f"randomized cube position to {cube_position}")
-
+        with physics.reset_context():
+            physics.named.data.qpos[:6] = START_ARM_POSE
+            np.copyto(physics.data.ctrl, START_ARM_POSE)
+            assert BOX_POSE[0] is not None
+            physics.named.data.qpos[-7:] = BOX_POSE[0]
+            # print(f"{BOX_POSE=}")
         super().initialize_episode(physics)
 
     @staticmethod
@@ -148,3 +124,43 @@ class GraspCubeEETask(BimanualViperXEETask):
             elif 0.05 <= height_difference < 0.09 or 0.11 < height_difference <= 0.15:  # 高度差稍微偏离
                 reward = 2
         return reward
+
+def get_action(master_bot_left, master_bot_right):
+    action = np.zeros(6)
+    # arm action
+    action[:6] = master_bot_left.dxl.joint_states.position[:6]
+    return action
+
+def test_sim_teleop():
+    """ Testing teleoperation in sim with ALOHA. Requires hardware and ALOHA repo to work. """
+    from interbotix_xs_modules.arm import InterbotixManipulatorXS
+
+    BOX_POSE[0] = [0.2, 0.5, 0.05, 1, 0, 0, 0]
+
+    # source of data
+    master_bot_left = InterbotixManipulatorXS(robot_model="wx250s", group_name="arm", gripper_name="gripper",
+                                              robot_name=f'master_left', init_node=True)
+    master_bot_right = InterbotixManipulatorXS(robot_model="wx250s", group_name="arm", gripper_name="gripper",
+                                              robot_name=f'master_right', init_node=False)
+
+    # setup the environment
+    env = make_sim_env_rm('sim_transfer_cube')
+    ts = env.reset()
+    episode = [ts]
+    # setup plotting
+    ax = plt.subplot()
+    plt_img = ax.imshow(ts.observation['images']['angle'])
+    plt.ion()
+
+    for t in range(1000):
+        action = get_action(master_bot_left, master_bot_right)
+        ts = env.step(action)
+        episode.append(ts)
+
+        plt_img.set_data(ts.observation['images']['angle'])
+        plt.pause(0.02)
+
+
+if __name__ == '__main__':
+    test_sim_teleop()
+

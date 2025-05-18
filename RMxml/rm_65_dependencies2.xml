@@ -1,0 +1,23 @@
+<mujocoinclude>
+    <compiler angle="radian" inertiafromgeom="auto" inertiagrouprange="4 5"/>
+    <size njmax="500" nconmax="100" />
+    <option gravity="0 0 0"/>
+    <asset>
+        <mesh name="base_link" file="base_link.STL" />
+        <mesh name="link1" file="link1.STL" />
+        <mesh name="link2" file="link2.STL" />
+        <mesh name="link3" file="link3.STL" />
+        <mesh name="link4" file="link4.STL" />
+        <mesh name="link5" file="link5.STL" />
+        <mesh name="link6" file="link6.STL" />
+    </asset>
+
+    <actuator>
+        <position   joint="rm_65/joint1" kp="0.68"/>
+        <position   joint="rm_65/joint2" kp="1.68"/>
+        <position   joint="rm_65/joint3" kp="1.68"/>
+        <position   joint="rm_65/joint4"  kp="0.68"/>
+        <position   joint="rm_65/joint5"  kp="2.28"/>
+        <position   joint="rm_65/joint6" kp="0.68"/>   
+    </actuator>
+</mujocoinclude>

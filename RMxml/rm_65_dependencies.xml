@@ -1,6 +1,7 @@
 <mujocoinclude>
     <compiler angle="radian" inertiafromgeom="auto" inertiagrouprange="4 5"/>
-    <option gravity="0 0 0" />
+    <size njmax="500" nconmax="100" />
+    <option gravity="0 0 -9.81"/>
     <asset>
         <mesh name="base_link" file="base_link.STL" />
         <mesh name="link1" file="link1.STL" />
@@ -9,19 +10,14 @@
         <mesh name="link4" file="link4.STL" />
         <mesh name="link5" file="link5.STL" />
         <mesh name="link6" file="link6.STL" />
-        <mesh name="vx300s_7_gripper" file="vx300s_7_gripper.stl" scale="0.001 0.001 0.001" />
-        <mesh name="vx300s_8_gripper_prop" file="vx300s_8_gripper_prop.stl" scale="0.001 0.001 0.001" />
-        <mesh name="vx300s_9_gripper_bar" file="vx300s_9_gripper_bar.stl" scale="0.001 0.001 0.001" />
-        <mesh name="vx300s_10_gripper_finger_left" file="vx300s_10_custom_finger_left.stl" scale="0.001 0.001 0.001" />
-        <mesh name="vx300s_10_gripper_finger_right" file="vx300s_10_custom_finger_right.stl" scale="0.001 0.001 0.001" />
     </asset>
 
     <actuator>
-        <motor joint="rm_65/joint1" gear="1"/>
-        <motor joint="rm_65/joint2" gear="1"/>
-        <motor joint="rm_65/joint3" gear="1"/>
-        <motor joint="rm_65/joint4" gear="1"/>
-        <motor joint="rm_65/joint5" gear="1"/>
-        <motor joint="rm_65/joint6" gear="1"/>
+        <position ctrllimited="true"  joint="rm_65/joint1" ctrlrange="-3.14 3.14" kp="20"/>
+        <position ctrllimited="true"  joint="rm_65/joint2" ctrlrange="-3.14 3.14" kp="20"/>
+        <position ctrllimited="true"  joint="rm_65/joint3" ctrlrange="-3.14 3.14" kp="20"/>
+        <position ctrllimited="true"  joint="rm_65/joint4" ctrlrange="-3.14 3.14" kp="20"/>
+        <position ctrllimited="true"  joint="rm_65/joint5" ctrlrange="-3.14 3.14" kp="20"/>
+        <position ctrllimited="true"  joint="rm_65/joint6" ctrlrange="-3.14 3.14" kp="20"/>   
     </actuator>
 </mujocoinclude>

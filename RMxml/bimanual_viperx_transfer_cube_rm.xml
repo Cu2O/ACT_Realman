@@ -1,0 +1,30 @@
+<mujoco>
+    <include file="scene.xml"/>
+    <include file="rm_65_dependencies2.xml"/>
+
+    <worldbody>
+        <include file="rm_65_2.xml" />
+
+        <body name="box" pos="0.2 0.5 0.05">
+            <joint name="red_box_joint" type="free" frictionloss="0.01" />
+            <inertial pos="0 0 0" mass="0.05" diaginertia="0.002 0.002 0.002" />
+            <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.005 0.0001" pos="0 0 0" size="0.02 0.02 0.02" type="box" name="red_box" rgba="1 0 0 1" />
+        </body>
+
+    </worldbody>
+
+    <!--actuator>
+        <position ctrllimited="true" ctrlrange="-3.14158 3.14158" joint="rm_65/joint1" kp="800"  user="1" forcelimited="true" forcerange="-150 150"/>
+        <position ctrllimited="true" ctrlrange="-3.14158 3.14158" joint="rm_65/joint2" kp="1600"  user="1" forcelimited="true" forcerange="-300 300"/>
+        <position ctrllimited="true" ctrlrange="-3.14158 3.14158" joint="rm_65/joint3" kp="800"  user="1" forcelimited="true" forcerange="-100 100"/>
+        <position ctrllimited="true" ctrlrange="-3.14158 3.14158" joint="rm_65/joint4" kp="10"  user="1" forcelimited="true" forcerange="-100 100"/>
+        <position ctrllimited="true" ctrlrange="-3.14158 3.14158" joint="rm_65/joint5" kp="50"  user="1"/>
+        <position ctrllimited="true" ctrlrange="-3.14158 3.14158" joint="rm_65/joint6" kp="20"  user="1"/>
+    </actuator-->
+
+    <keyframe>
+        <key qpos="-0.474410956 -0.272182426  2.04231873   0. 1.36208805  1.09321004  0.2 0.5 0.05 1 0 0 0"/>
+    </keyframe>
+
+
+</mujoco>
