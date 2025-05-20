@@ -47,7 +47,7 @@ def main(args):
     camera_names = task_config['camera_names']
 
     # fixed parameters
-    state_dim = 14
+    state_dim = 6
     lr_backbone = 1e-5
     backbone = 'resnet18'
     if policy_class == 'ACT':
@@ -165,7 +165,7 @@ def eval_bc(config, ckpt_name, save_episode=True):
     # load policy and stats
     ckpt_path = os.path.join(ckpt_dir, ckpt_name)
     policy = make_policy(policy_class, policy_config)
-    loading_status = policy.load_state_dict(torch.load(ckpt_path))
+    loading_status = policy.load_state_dict(torch.load(ckpt_path, map_location='cpu'))
     print(loading_status)
     policy.to('cpu')
     policy.eval()
@@ -184,8 +184,8 @@ def eval_bc(config, ckpt_name, save_episode=True):
         env = make_real_env(init_node=True)
         env_max_reward = 0
     else:
-        from sim_env import make_sim_env
-        env = make_sim_env(task_name)
+        from sim_env_rm import make_sim_env_rm, BOX_POSE
+        env = make_sim_env_rm(task_name)
         env_max_reward = env.task.max_reward
 
     query_frequency = policy_config['num_queries']
@@ -201,12 +201,14 @@ def eval_bc(config, ckpt_name, save_episode=True):
     for rollout_id in range(num_rollouts):
         rollout_id += 0
         ### set task
-        if 'sim_transfer_cube' in task_name:
+        if 'sim_grasp_cube_ur' in task_name:
             BOX_POSE[0] = sample_box_pose() # used in sim reset
+            ts = env.reset()
         elif 'sim_insertion' in task_name:
             BOX_POSE[0] = np.concatenate(sample_insertion_pose()) # used in sim reset
+            ts = env.reset()
 
-        ts = env.reset()
+        #ts = env.reset()
 
         ### onscreen render
         if onscreen_render:

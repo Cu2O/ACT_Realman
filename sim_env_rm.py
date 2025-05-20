@@ -41,7 +41,7 @@ class BimanualViperXTask(base.Task):
 
     def before_step(self, action, physics):
         left_arm_action = action[:6]
-        print('Target joint positions:', left_arm_action)
+        # print('Target joint positions:', left_arm_action)
         # 将目标位置赋值给控制输入
         np.copyto(physics.data.ctrl[:6], left_arm_action)
         # 调用父类的 before_step 方法

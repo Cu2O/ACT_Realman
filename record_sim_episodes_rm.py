@@ -99,9 +99,9 @@ def main(args):
             plt.ion()
         for t in range(len(joint_traj)): # note: this will increase episode length by 1
             action = joint_traj[t]
-            print('traj', action)
+            # print('traj', action)
             ts = env.step(action)
-            print('arm real',ts.observation['qpos'])
+            # print('arm real',ts.observation['qpos'])
             episode_replay.append(ts)
             if onscreen_render:
                 plt_img.set_data(ts.observation['images'][render_cam_name])
