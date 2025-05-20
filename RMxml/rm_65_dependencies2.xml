@@ -13,11 +13,11 @@
     </asset>
 
     <actuator>
-        <position   joint="rm_65/joint1" kp="0.68"/>
-        <position   joint="rm_65/joint2" kp="1.68"/>
-        <position   joint="rm_65/joint3" kp="1.68"/>
-        <position   joint="rm_65/joint4"  kp="0.68"/>
-        <position   joint="rm_65/joint5"  kp="2.28"/>
-        <position   joint="rm_65/joint6" kp="0.68"/>   
+        <position   joint="rm_65/joint1" kp="1."/>
+        <position   joint="rm_65/joint2" kp="2.5"/>
+        <position   joint="rm_65/joint3" kp="1.8"/>
+        <position   joint="rm_65/joint4"  kp="1."/>
+        <position   joint="rm_65/joint5"  kp="1."/>
+        <position   joint="rm_65/joint6" kp="1."/>   
     </actuator>
 </mujocoinclude>
