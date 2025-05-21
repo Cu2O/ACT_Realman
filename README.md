@@ -9,6 +9,16 @@ python3 imitate_episodes_rm.py --task_name sim_grasp_cube_ur --ckpt_dir ./model 
 
 ## 修改
 把 imitate_episodes_rm.py detr/main.py 中所有.cuda()替换为了.to('cpu')
+在gpu训练请换为cuda
 
 ## eval
 python3 imitate_episodes_rm.py --task_name sim_grasp_cube_ur --ckpt_dir ./model --policy_class ACT --kl_weight 10 --chunk_size 10 --hidden_dim 128 --batch_size 4 --dim_feedforward 3200 --num_epochs 2000  --lr 1e-5 --seed 0  --eval  --onscreen_render
+
+## 文件
+constants.py 增加对sim_grasp_cube_ur任务的配置
+ee_sim_env_rm.py 通过mocap控制机械臂末端的仿真环境
+sim_env_rm.py 通过控制机械臂角度的仿真环境
+record_sim_episodes_rm.py 数据集收集
+imitate_episodes_rm.py act训练与评价
+scripted_policy_rm.py 脚本操控机械臂收集数据
+test_sim_env.py sim_env_test.py机械臂角度控制仿真环境测试

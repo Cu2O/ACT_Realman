@@ -43,7 +43,9 @@ class BimanualViperXTask(base.Task):
         left_arm_action = action[:6]
         # print('Target joint positions:', left_arm_action)
         # 将目标位置赋值给控制输入
-        np.copyto(physics.data.ctrl[:6], left_arm_action)
+        # np.copyto(physics.data.ctrl[:6], left_arm_action)
+        np.copyto(physics.data.qpos[:6],action[0:6])
+        np.copyto(physics.data.qvel[:6],np.zeros(6))
         # 调用父类的 before_step 方法
         super().before_step(action, physics)
 
@@ -117,11 +119,11 @@ class GraspCubeTask(BimanualViperXTask):
 
         # 奖励逻辑
         reward = 0
-        if horizontal_distance < 0.05:  # 水平距离小于 5 厘米
+        if horizontal_distance < 0.3:  # 水平距离小于 5 厘米
             reward = 1
-            if 0.09 <= height_difference <= 0.11:  # 高度差在 0.1 米 ± 1 厘米范围内
+            if 0.03 <= height_difference <= 0.17:  # 高度差在 0.1 米 ± 1 厘米范围内
                 reward = 4
-            elif 0.05 <= height_difference < 0.09 or 0.11 < height_difference <= 0.15:  # 高度差稍微偏离
+            elif 0.01 <= height_difference < 0.03 or 0.17 < height_difference <= 0.19:  # 高度差稍微偏离
                 reward = 2
         return reward
 
