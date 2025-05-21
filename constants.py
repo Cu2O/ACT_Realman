@@ -34,7 +34,7 @@ SIM_TASK_CONFIGS = {
     'sim_grasp_cube_ur': {
         'dataset_dir': DATA_DIR + '/sim_grasp_cube_ur',
         'num_episodes': 10,
-        'episode_len': 170,
+        'episode_len': 200,
         'camera_names': ['top']
     },
 

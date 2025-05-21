@@ -80,7 +80,8 @@ class PickAndTransferPolicy2(BasePolicy):
             {"t": 0, "xyz": init_mocap_pose_left[:3], "quat":gripper_pick_quat_grasp.elements}, # sleep
             {"t": 90, "xyz": box_xyz + np.array([0, 0, 0.2]), "quat": gripper_pick_quat_grasp.elements}, # approach the cube
             {"t": 130, "xyz": box_xyz + np.array([0, 0, +0.1]), "quat":gripper_pick_quat_grasp.elements}, # go down
-            {"t": 170, "xyz": box_xyz + np.array([0, 0, +0.1]), "quat": gripper_pick_quat_grasp.elements} # close gripper
+            {"t": 170, "xyz": box_xyz + np.array([0, 0, +0.05]), "quat": gripper_pick_quat_grasp.elements}, # close gripper
+            {"t": 200, "xyz": box_xyz + np.array([0, 0, +0.05]), "quat": gripper_pick_quat_grasp.elements} # close gripper
         ]
 
 def test_policy(task_name):

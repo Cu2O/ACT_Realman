@@ -25,7 +25,7 @@
                                 <inertial pos="0.000714235 -0.000396719 -0.0126724" quat="0.613063 0.350717 -0.614301 0.351831" mass="0.0649018" diaginertia="3.17886e-05 2.10548e-05 1.80205e-05" />
                                 <joint name="rm_65/joint6" pos="0 0 0" axis="0 0 1" limited="true" range="-6.28 6.28" damping="0"  frictionloss="0.1"/>
                                 <geom type="mesh" rgba="1 1 1 1" mesh="link6" name="rm_65/link6" contype="0" conaffinity="0" />
-                                <body name="rm_65/gripper_link" pos="0.069744 0 0" quat="0.707107 0 0 0.707107">
+                                <body name="rm_65/gripper_link" pos="0.0 0 0" quat="0.707107 0 0 0.707107">
                                     <body name="rm_65/camera_focus" pos="0.15 0 0.01">
                                         <site pos="0 0 0" size="0.01" type="sphere" name="left_cam_focus" rgba="0 0 1 0"/>
                                     </body>

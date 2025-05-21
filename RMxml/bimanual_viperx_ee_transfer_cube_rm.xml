@@ -3,7 +3,7 @@
     <include file="rm_65_dependencies.xml"/>
 
     <equality>
-        <weld body1="mocap_rm" body2="rm_65/gripper_link"solref="0.001 0.8" 
+        <weld body1="mocap_rm" body2="rm_65/gripper_link" solref="0.001 0.8" 
       solimp="0.99 0.99 0.001"
       relpose="0 0 0 1 0 0 0" />
     </equality>

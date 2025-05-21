@@ -141,10 +141,10 @@ class GraspCubeEETask(BimanualViperXEETask):
 
         # 奖励逻辑
         reward = 0
-        if horizontal_distance < 0.05:  # 水平距离小于 5 厘米
+        if horizontal_distance < 0.3:  # 水平距离小于 5 厘米
             reward = 1
-            if 0.09 <= height_difference <= 0.11:  # 高度差在 0.1 米 ± 1 厘米范围内
+            if 0.02 <= height_difference <= 0.08:  # 高度差在 0.1 米 ± 1 厘米范围内
                 reward = 4
-            elif 0.05 <= height_difference < 0.09 or 0.11 < height_difference <= 0.15:  # 高度差稍微偏离
+            elif 0.00 <= height_difference < 0.02 or 0.08 < height_difference <= 0.10:  # 高度差稍微偏离
                 reward = 2
         return reward

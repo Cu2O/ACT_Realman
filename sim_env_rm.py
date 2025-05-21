@@ -121,11 +121,12 @@ class GraspCubeTask(BimanualViperXTask):
         reward = 0
         if horizontal_distance < 0.3:  # 水平距离小于 5 厘米
             reward = 1
-            if 0.03 <= height_difference <= 0.17:  # 高度差在 0.1 米 ± 1 厘米范围内
+            if 0.02 <= height_difference <= 0.08:  # 高度差在 0.1 米 ± 1 厘米范围内
                 reward = 4
-            elif 0.01 <= height_difference < 0.03 or 0.17 < height_difference <= 0.19:  # 高度差稍微偏离
+            elif 0.00 <= height_difference < 0.02 or 0.08 < height_difference <= 0.10:  # 高度差稍微偏离
                 reward = 2
         return reward
+
 
 def get_action(master_bot_left, master_bot_right):
     action = np.zeros(6)
