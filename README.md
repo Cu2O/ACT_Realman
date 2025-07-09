@@ -2,17 +2,24 @@
 Aloha ACT execute on Realman65，Aloha ACT在Realman65机械臂上复现
 
 # 数据集收集
-python3 record_sim_episodes_rm.py --task_name sim_grasp_cube_ur --dataset_dir data/sim_grasp_cube_ur --num_episodes 50 --onscreen_render
+``` python3 record_sim_episodes_rm.py --task_name sim_grasp_cube_ur --dataset_dir data/sim_grasp_cube_ur --num_episodes 50 --onscreen_render``` 
 
 # 数据训练
-python3 imitate_episodes_rm.py --task_name sim_grasp_cube_ur --ckpt_dir ./model --policy_class ACT --kl_weight 10 --chunk_size 10 --hidden_dim 128 --batch_size 4 --dim_feedforward 3200 --num_epochs 2000  --lr 1e-5 --seed 0
+``` python3 imitate_episodes_rm.py --task_name sim_grasp_cube_ur --ckpt_dir ./model --policy_class ACT --kl_weight 10 --chunk_size 10 --hidden_dim 128 --batch_size 4 --dim_feedforward 3200 --num_epochs 2000  --lr 1e-5 --seed 0``` 
 
-## 修改
+# 修改
 把 imitate_episodes_rm.py detr/main.py 中所有.cuda()替换为了.to('cpu')
 在gpu训练请换为cuda
 
-## 评估
-python3 imitate_episodes_rm.py --task_name sim_grasp_cube_ur --ckpt_dir ./model --policy_class ACT --kl_weight 10 --chunk_size 10 --hidden_dim 128 --batch_size 4 --dim_feedforward 3200 --num_epochs 2000  --lr 1e-5 --seed 0  --eval  --onscreen_render
+# 评估
+``` python3 imitate_episodes_rm.py --task_name sim_grasp_cube_ur --ckpt_dir ./model --policy_class ACT --kl_weight 10 --chunk_size 10 --hidden_dim 128 --batch_size 4 --dim_feedforward 3200 --num_epochs 2000  --lr 1e-5 --seed 0  --eval  --onscreen_render``` 
+
+# 视频
+
+https://github.com/user-attachments/assets/4be735e8-7dd8-4fb1-9193-ef3e92e0d595
+
+
+
 
 ## 文件
 constants.py 增加对sim_grasp_cube_ur任务的配置
